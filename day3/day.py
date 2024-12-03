@@ -17,24 +17,17 @@ def run_1():
 
 def run_2():
     input = read_file()
-    instructions = [(m.start(0), m.group(1), m.group(2)) for m in re.finditer("mul\((\d+),(\d+)\)", input)]
-    dos = [(m.start(0), m.group(0)) for m in re.finditer("don?'?t?\(\)", input)]
-
     sum = 0
-    for (index, x, y) in instructions:
-        match = find(index, dos)
-        if match != "don't()":
-            sum += int(x) * int(y)
-    print(sum)
+    enabled = True
+    for match in re.finditer("(don?'?t?\(\))|mul\((\d+),(\d+)\)", input):
+        if (match.group(0) == "don't()"):
+            enabled = False
+        elif (match.group(0) == "do()"):
+            enabled = True
+        elif enabled:
+            sum += int(match.group(2)) * int(match.group(3))
 
-def find(index, list):
-    prev = None
-    for item in list:
-        (i, value) = item
-        if i > index:
-            return prev
-        prev = value
-    return None
+    print(sum)
 
 
 run_1()
